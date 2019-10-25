@@ -14,16 +14,48 @@ class App extends Component {
       newTask: ''
     }
   }
+
+  handleChange = (event) => {
+    this.setState({ newTask: event.target.value })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.setState(state => {
+      const tasks = state.tasks.concat({ id: this.state.tasks.length + 1, name: this.state.newTask, done: false });
+      return {
+        tasks,
+        newTask: '',
+      };
+    });
+  }
+
+  toggleDone = (id) => {
+    this.setState(state => {
+      const tasks = state.tasks.map((item, index) => {
+        if (index === id) {
+          item.done=!item.done       
+         return item;
+        } else{
+          return item
+        }
+      });
+      return {
+        tasks,
+      };
+    });
+  };
+
   render() {
     return (
       <div className="wrapper">
         <div className="list">
           <h3>Por hacer:</h3>
           <ul className="todo">
-            {this.state.tasks.map((task, index) => <li key={task.id}>{task.name}</li>)}
+            {this.state.tasks.map((task, index) => <li key={task.id} onClick={() => this.toggleDone(index)} className={task.done ? 'done' : ''} >{task.name}</li>)}
           </ul>
-          <form>
-            <input type="text" id="new-task" placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
+          <form onSubmit={this.handleSubmit}>
+            <input onChange={this.handleChange} className={this.state.newTask === '' ? 'error' : ''} type="text" id="new-task" placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
           </form>
         </div>
       </div>
